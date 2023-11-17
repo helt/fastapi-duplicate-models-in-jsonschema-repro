@@ -26,11 +26,15 @@ class HuntingSkill(Enum):
 
 class Cat(Pet):
     petType: Literal[PetType.CAT] = PetType.CAT
-    huntingSkill: Annotated[HuntingSkill, Field( default=HuntingSkill.LAZY, description="The measured skill for hunting")]
+    huntingSkill: Annotated[HuntingSkill, Field(default=HuntingSkill.LAZY, description="The measured skill for hunting")]
 
 class Dog(Pet):
     petType: Literal[PetType.DOG] = PetType.DOG
-    packSize: Annotated[int, Field(format="int32", minimum=0, default=0)]
+    packSize: Annotated[int, Field(json_schema_extra={
+        "format":"int32",
+        "minimum": 0,
+        "default": 0
+    })]
 
 Cohort = Annotated[Union[Dog, Cat], Field(..., discriminator="petType")]
 
