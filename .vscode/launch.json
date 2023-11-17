@@ -1,0 +1,37 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "model_duplication",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "fastapi_duplicate_models_in_jsonschema_repro.model_duplication:app",
+                "--reload",
+                "--port",
+                "8090"
+            ],
+            "jinja": true,
+            "justMyCode": true
+        },
+        {
+            "name": "polymorphism",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "fastapi_duplicate_models_in_jsonschema_repro.polymorphism:app",
+                "--reload",
+                "--port",
+                "8090"
+            ],
+            "jinja": true,
+            "justMyCode": true
+        }
+
+    ]
+}

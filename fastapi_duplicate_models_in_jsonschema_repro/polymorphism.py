@@ -3,7 +3,7 @@ from enum import Enum
 import json
 import os
 from pathlib import Path
-from typing import Annotated, List, Literal, Optional, Union
+from typing import Annotated, List, Literal
 from uuid import UUID, uuid4
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
@@ -29,10 +29,6 @@ class HuntingSkill(Enum):
 
 class Cat(Pet):
     petType: Literal[PetType.CAT] = PetType.CAT  # missing in constructor
-    # petType = PetType.CAT # illegal
-    # petType = Literal[PetType.CAT]  # https://errors.pydantic.dev/2.5/u/model-field-overridden
-    # petType = Annotated[Literal[PetType.CAT], Field(default=PetType.CAT)]  # https://errors.pydantic.dev/2.5/u/model-field-overridden
-    # petType = Literal[PetType.CAT] = Field(default=PetType.CAT) # TypeError: '_LiteralSpecialForm' object does not support item assignment
     huntingSkill: Annotated[
         HuntingSkill,
         Field(default=HuntingSkill.LAZY, description="The measured skill for hunting"),
@@ -41,14 +37,12 @@ class Cat(Pet):
 
 class Dog(Pet):
     petType: Literal[PetType.DOG] = PetType.DOG
-    # petType = PetType.DOG # illegal
     packSize: Annotated[
-        int, Field(json_schema_extra={
-            "format": "int32",
-            "minimum": 0,
-            "default": 0
-        })
+        int, Field(default=0, json_schema_extra={"format": "int32", "minimum": 0})
     ]
+
+
+PetUnion = Cat | Dog
 
 
 # register startup event
@@ -62,13 +56,23 @@ async def lifespan(application: FastAPI):
 app = FastAPI(debug=True, lifespan=lifespan)
 
 
-@app.get("/")
-async def list() -> List[Pet]:
+@app.get("/pets")
+async def pets() -> List[Pet]:
     return [
         Cat(name="Felix"),
         Cat(name="Kitty"),
         Dog(name="Wolf", packSize=24),
-        Dog(name="Rex", packSize=2)
+        Dog(name="Rex"),
+    ]
+
+
+@app.get("/petlistunion")
+async def petlistunion() -> List[PetUnion]:
+    return [
+        Cat(name="Felix"),
+        Cat(name="Kitty"),
+        Dog(name="Wolf", packSize=24),
+        Dog(name="Rex"),
     ]
 
 

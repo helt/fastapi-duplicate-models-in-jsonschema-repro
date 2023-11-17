@@ -1,67 +1,6 @@
 {
  "components": {
   "schemas": {
-   "Cat": {
-    "properties": {
-     "huntingSkill": {
-      "allOf": [
-       {
-        "$ref": "#/components/schemas/HuntingSkill"
-       }
-      ],
-      "default": "lazy",
-      "description": "The measured skill for hunting"
-     },
-     "id": {
-      "format": "uuid",
-      "title": "Id",
-      "type": "string"
-     },
-     "name": {
-      "default": "Unnamed pet",
-      "title": "Name",
-      "type": "string"
-     },
-     "petType": {
-      "const": "cat",
-      "default": "cat",
-      "title": "Pettype"
-     }
-    },
-    "title": "Cat",
-    "type": "object"
-   },
-   "Dog": {
-    "properties": {
-     "id": {
-      "format": "uuid",
-      "title": "Id",
-      "type": "string"
-     },
-     "name": {
-      "default": "Unnamed pet",
-      "title": "Name",
-      "type": "string"
-     },
-     "packSize": {
-      "default": 0,
-      "format": "int32",
-      "minimum": 0.0,
-      "title": "Packsize",
-      "type": "integer"
-     },
-     "petType": {
-      "const": "dog",
-      "default": "dog",
-      "title": "Pettype"
-     }
-    },
-    "required": [
-     "packSize"
-    ],
-    "title": "Dog",
-    "type": "object"
-   },
    "HTTPValidationError": {
     "properties": {
      "detail": {
@@ -74,16 +13,6 @@
     },
     "title": "HTTPValidationError",
     "type": "object"
-   },
-   "HuntingSkill": {
-    "enum": [
-     "clueless",
-     "lazy",
-     "adventurous",
-     "aggressive"
-    ],
-    "title": "HuntingSkill",
-    "type": "string"
    },
    "Pet": {
     "properties": {
@@ -106,6 +35,24 @@
      "petType"
     ],
     "title": "Pet",
+    "type": "object"
+   },
+   "PetBase": {
+    "properties": {
+     "name": {
+      "default": "Unnamed pet",
+      "title": "Name",
+      "type": "string"
+     },
+     "petType": {
+      "title": "Pettype",
+      "type": "string"
+     }
+    },
+    "required": [
+     "petType"
+    ],
+    "title": "PetBase",
     "type": "object"
    },
    "ValidationError": {
@@ -150,28 +97,44 @@
  "openapi": "3.1.0",
  "paths": {
   "/": {
-   "get": {
-    "operationId": "list__get",
+   "post": {
+    "operationId": "create__post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PetBase"
+       }
+      }
+     },
+     "required": true
+    },
     "responses": {
      "200": {
       "content": {
        "application/json": {
         "schema": {
-         "items": {
-          "$ref": "#/components/schemas/Pet"
-         },
-         "title": "Response List  Get",
-         "type": "array"
+         "$ref": "#/components/schemas/Pet"
         }
        }
       },
       "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
      }
     },
-    "summary": "List"
+    "summary": "Create"
    },
-   "post": {
-    "operationId": "update__post",
+   "put": {
+    "operationId": "update__put",
     "requestBody": {
      "content": {
       "application/json": {
@@ -207,82 +170,26 @@
     "summary": "Update"
    }
   },
-  "/get_cat": {
+  "/pets": {
    "get": {
-    "operationId": "get_cat_get_cat_get",
-    "parameters": [
-     {
-      "in": "query",
-      "name": "q",
-      "required": true,
-      "schema": {
-       "title": "Q",
-       "type": "string"
-      }
-     }
-    ],
+    "operationId": "pets_pets_get",
     "responses": {
      "200": {
       "content": {
        "application/json": {
         "schema": {
-         "$ref": "#/components/schemas/Cat"
+         "items": {
+          "$ref": "#/components/schemas/Pet"
+         },
+         "title": "Response Pets Pets Get",
+         "type": "array"
         }
        }
       },
       "description": "Successful Response"
-     },
-     "422": {
-      "content": {
-       "application/json": {
-        "schema": {
-         "$ref": "#/components/schemas/HTTPValidationError"
-        }
-       }
-      },
-      "description": "Validation Error"
      }
     },
-    "summary": "Get Cat"
-   }
-  },
-  "/get_dog": {
-   "get": {
-    "operationId": "get_dog_get_dog_get",
-    "parameters": [
-     {
-      "in": "query",
-      "name": "q",
-      "required": true,
-      "schema": {
-       "title": "Q",
-       "type": "string"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "content": {
-       "application/json": {
-        "schema": {
-         "$ref": "#/components/schemas/Dog"
-        }
-       }
-      },
-      "description": "Successful Response"
-     },
-     "422": {
-      "content": {
-       "application/json": {
-        "schema": {
-         "$ref": "#/components/schemas/HTTPValidationError"
-        }
-       }
-      },
-      "description": "Validation Error"
-     }
-    },
-    "summary": "Get Dog"
+    "summary": "Pets"
    }
   }
  }
